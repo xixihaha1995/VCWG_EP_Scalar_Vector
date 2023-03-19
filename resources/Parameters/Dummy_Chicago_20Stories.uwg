@@ -30,13 +30,13 @@ Tdeep_ctrl,2,         # 1: Using force restore method, 2: Using climate data (fr
 # =================================================
 # Urban Configuration
 # =================================================
-nz,36,                 # number of points (nz*dz = 3*bldHeight)
-nz_u,11.88,               # number of canopy levels in the vertical (nz_u*dz = bldHeight)
+nz,150,                 # number of points (nz*dz = 3*bldHeight)
+nz_u,60,               # number of canopy levels in the vertical (nz_u*dz = bldHeight)
 dz,1,                  # vertical resolution [m]
-Width_canyon,33.3,     # distance between buildings at street level in the x and y direction must be equal [m]
-Width_roof,33.3,         # building dimension [m]
-theta_canyon,90,       # Canyon direction from geographical north, in the counter trigonometric direction (from -90 to 90 degrees)
-Height_canyon,11.88,      # Average building height [m]
+Width_canyon,15,     # distance between buildings at street level in the x and y direction must be equal [m]
+Width_roof,15,         # building dimension [m]
+theta_canyon,0,       # Canyon direction from geographical north, in the counter trigonometric direction (from -90 to 90 degrees)
+Height_canyon,60,      # Average building height [m]
 fveg_R,0,              # Vegetated roof fraction (between 0 and 1)
 fimp_R,1.0,            # Impervious roof fraction (between 0 and 1)
 fveg_G,0,            # Vegetated ground fraction
@@ -258,7 +258,7 @@ Catm_O2,210000,         # Atmospheric O2 mixing ratio [ppm]=[umolO2 mol^-1]
 Ri_b_cr,0.1,           # Critical bulk Richardson number in the urban area used to determine thermal stability
 z0_roof,0.02,          # Roof roughness [m] ## Check make sure roughness length are not computed multiple times inconsistently, delete
 z0_road,0.02,          # Road roughness [m] ## Check make sure roughness length are not computed multiple times inconsistently, delete
-cdmin,0.01,            # Minimum diffusion coefficient
+cdmin,1e-2,            # Minimum diffusion coefficient
 prandtl,0.8,           # Turbulent Prandtl number
 schmidt,1,             # Turbulent Schmidt number
 HVAC_atm_frac,1,       # Fraction of sensible waste heat from building released into the atmosphere
