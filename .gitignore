@@ -1,0 +1,13 @@
+# git update gitingore
+#git rm -r --cached .
+# ignore all files
+*
+# except code and inputs
+!.gitignore
+!*.py
+!/resources/
+!/resources/**
+## note the following txt and csv files are not included in version control
+/resources/Parameters/*.txt
+/resources/DOERefBuildings/**
+/resources/TopForcing/*.csv
