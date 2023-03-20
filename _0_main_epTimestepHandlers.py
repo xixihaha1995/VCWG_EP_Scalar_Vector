@@ -150,47 +150,6 @@ def overwrite_ep_weather(state):
                 coordination.ep_api.exchange.set_actuator_value(state, highOfficeActuatorsHandles[f'owb{flr_nbr}'],
                                                                 owb_c_list[idx])
         coordination.sem2.release()#
-def _medOfficeGetFloorHandles(state, flrNum):
-    _handlsDict = {}
-
-    _flrToName = {'1': ['BOTTOM', 'BOT'], '2': ['MID', 'MID'], '3': ['TOP', 'TOP']}
-
-    _handlsDict['fan'] = None
-    _handlsDict['cooling'] = None
-    _handlsDict['heating'] = None
-    _handlsDict['reheating'] = []
-
-    _tmpFan = coordination.ep_api.exchange.get_variable_handle(state, "Fan Electricity Energy", \
-                                                               f"VAV_{flrNum}_FAN")
-    _tmpClCoil = coordination.ep_api.exchange.get_variable_handle(state, "Cooling Coil Electricity Energy", \
-                                                                  f"VAV_{flrNum}_COOLC DXCOIL")
-    _tmpHtCoil = coordination.ep_api.exchange.get_variable_handle(state, "Heating Coil Electricity Energy", \
-                                                                  f"VAV_{flrNum}_HEATC")
-    _tmpHtCoilCore = coordination.ep_api.exchange.get_variable_handle(state, "Heating Coil Electricity Energy", \
-                                                                      f"CORE_{_flrToName[flrNum][0]} VAV BOX REHEAT COIL")
-    _tmpHtCoilPeri1 = coordination.ep_api.exchange.get_variable_handle(state, "Heating Coil Electricity Energy", \
-                                                                       f"PERIMETER_{_flrToName[flrNum][1]}_ZN_1 VAV BOX REHEAT COIL")
-    _tmpHtCoilPeri2 = coordination.ep_api.exchange.get_variable_handle(state, "Heating Coil Electricity Energy", \
-                                                                       f"PERIMETER_{_flrToName[flrNum][1]}_ZN_2 VAV BOX REHEAT COIL")
-    _tmpHtCoilPeri3 = coordination.ep_api.exchange.get_variable_handle(state, "Heating Coil Electricity Energy", \
-                                                                       f"PERIMETER_{_flrToName[flrNum][1]}_ZN_3 VAV BOX REHEAT COIL")
-    _tmpHtCoilPeri4 = coordination.ep_api.exchange.get_variable_handle(state, "Heating Coil Electricity Energy", \
-                                                                       f"PERIMETER_{_flrToName[flrNum][1]}_ZN_4 VAV BOX REHEAT COIL")
-    if _tmpFan * _tmpClCoil * _tmpHtCoil * _tmpHtCoilCore * _tmpHtCoilPeri1 * _tmpHtCoilPeri2 * _tmpHtCoilPeri3 * _tmpHtCoilPeri4 < 0:
-        print(f'mediumOfficeGetSensor(): floor {flrNum} handles not available')
-        os.getpid()
-        os.kill(os.getpid(), signal.SIGTERM)
-
-    _handlsDict['fan'] = _tmpFan
-    _handlsDict['cooling'] = _tmpClCoil
-    _handlsDict['heating'] = _tmpHtCoil
-    _handlsDict['reheating'].append(_tmpHtCoilCore)
-    _handlsDict['reheating'].append(_tmpHtCoilPeri1)
-    _handlsDict['reheating'].append(_tmpHtCoilPeri2)
-    _handlsDict['reheating'].append(_tmpHtCoilPeri3)
-    _handlsDict['reheating'].append(_tmpHtCoilPeri4)
-
-    return _handlsDict
 def _medium_get_sensor_handles(state):
     handles_dict  = {}
     hvac_heat_rejection_sensor_handle  = \
@@ -241,28 +200,8 @@ def _medium_get_sensor_handles(state):
         handles_dict['s_wall_Solar'].append(_tmp_SSolar)
         handles_dict['n_wall_Text'].append(_tmp_NText)
         handles_dict['n_wall_Solar'].append(_tmp_NSolar)
-    handles_dict['floor_energy'] = {}
-    for _flr in range(1, 4):
-        handles_dict['floor_energy'][str(_flr)] = _medOfficeGetFloorHandles(state, str(_flr))
     return handles_dict
 
-def _medOfficeGetFloorValues(state, handleDict):
-    # _handlsDict['fan'] = _tmpFan
-    # _handlsDict['cooling'] = _tmpClCoil
-    # _handlsDict['reheating'].append(_tmpHtCoilCore)
-    # _handlsDict['reheating'].append(_tmpHtCoilPeri1)
-    # _handlsDict['reheating'].append(_tmpHtCoilPeri2)
-    # _handlsDict['reheating'].append(_tmpHtCoilPeri3)
-    # _handlsDict['reheating'].append(_tmpHtCoilPeri4)
-    # coordination.ep_api.exchange.get_variable_value(state, medOfficeSensorHandles['simhvac'])
-    flrEnergy_J = 0
-    flrEnergy_J += coordination.ep_api.exchange.get_variable_value(state, handleDict['fan'])
-    flrEnergy_J += coordination.ep_api.exchange.get_variable_value(state, handleDict['cooling'])
-    # _tmpHeating = coordination.ep_api.exchange.get_variable_value(state, handleDict['heating'])
-    # print(f"floor coil heating: {_tmpHeating}")
-    for _reheat in handleDict['reheating']:
-        flrEnergy_J += coordination.ep_api.exchange.get_variable_value(state, _reheat)
-    return flrEnergy_J
 def _medOffice_get_sensor_values(state, handleDict):
     _roof_Text_c = 0
     _floor_Text_c = 0
@@ -370,12 +309,7 @@ def medOff_midApart_get_ep_results(state):
         hvac_heat_rejection_J = coordination.ep_api.exchange.get_variable_value(state, hanldesDict['simhvac'])
         hvac_waste_w_m2 = hvac_heat_rejection_J / accumulated_time_in_seconds / coordination.footprint_area_m2
         for flr in range(coordination.EP_nFloor):
-            _tmpFlrJ = _medOfficeGetFloorValues(state, hanldesDict['floor_energy'][str(1 + flr)])
-            _tmpFlgW_m2 = _tmpFlrJ / accumulated_time_in_seconds/ coordination.footprint_area_m2
-            if 'CoolElec' in coordination.bld_type:
-                coordination.EP_floor_energy_lst[flr] += _tmpFlgW_m2
-            else:
-                coordination.EP_floor_energy_lst[flr] += hvac_waste_w_m2 / coordination.EP_nFloor
+            coordination.EP_floor_energy_lst[flr] += hvac_waste_w_m2 / coordination.EP_nFloor
         coordination.ep_sensWaste_w_m2_per_footprint_area += hvac_waste_w_m2
 
         time_index_alignment_bool = 1 > abs(curr_sim_time_in_seconds - coordination.vcwg_needed_time_idx_in_seconds)
@@ -737,17 +671,8 @@ def run_ep_api():
     start_time = '2004-06-01 00:00:00'
     '''
 
-    '''
-    idfFileName = 'Vector_Detailed_MedOffice_CoolElec.idf'
-    experiments_theme = 'DummyChicagoMedOffice_The_Effect_sensWaste_Profile'
-    epwFileName = 'USA_IL_Chicago-OHare.Intl.AP.725300_TMY3_No_Precipitable_Water.epw'
-    TopForcingFileName = 'None'
-    VCWGParamFileName = 'Chicago_MedOffice.uwg'
-    start_time = '2004-06-01 00:00:00'
-    '''
 
-
-    idfFileName = 'Vector_Detailed_MedOffice_SimHVAC.idf'
+    idfFileName = 'Vector_Detailed_MedOffice.idf'
     experiments_theme = 'DummyChicagoMedOffice_The_Effect_sensWaste_Profile'
     epwFileName = 'USA_IL_Chicago-OHare.Intl.AP.725300_TMY3_No_Precipitable_Water.epw'
     TopForcingFileName = 'None'
