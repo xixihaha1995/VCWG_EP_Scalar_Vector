@@ -8,10 +8,10 @@ def ini_all(_experiments_theme,_idfFileName,_epwFileName,_start_time,
         vcwg_needed_time_idx_in_seconds, \
         vcwg_canTemp_K, vcwg_canSpecHum_Ratio, vcwg_canPress_Pa, ep_sensWaste_w_m2_per_footprint_area, \
         ep_floor_Text_K, ep_floor_Tint_K, ep_roof_Text_K, ep_roof_Tint_K, \
-        ep_wallSun_Text_K, ep_wallSun_Tint_K, ep_wallShade_Text_K, ep_wallShade_Tint_K,\
+        ep_wallSun_Text_K, ep_wallSun_Tint_K, ep_wallShade_Text_K, ep_wallShade_Tint_K, \
         footprint_area_m2, vcwg_hConv_w_m2_per_K, \
         get_ep_results_inited_handle, overwrite_ep_weather_inited_handle, called_vcwg_bool, ep_last_call_time_seconds, \
-        epwFileName, start_time,TopForcingFileName, VCWGParamFileName
+        epwFileName, start_time, TopForcingFileName, VCWGParamFileName
 
     epwFileName = _epwFileName
     start_time = _start_time
@@ -23,7 +23,7 @@ def ini_all(_experiments_theme,_idfFileName,_epwFileName,_start_time,
     called_vcwg_bool = False
     ep_last_call_time_seconds = 0
     project_path = os.path.dirname(os.path.abspath(__file__))
-    bld_type = _idfFileName[0:-4]
+    bld_type = 'VCWG_EP_Online_' + _idfFileName[0:-4]
     print(f'bld_type = {bld_type}')
 
     experiments_theme = _experiments_theme
@@ -62,15 +62,17 @@ def ini_all(_experiments_theme,_idfFileName,_epwFileName,_start_time,
         footprint_area_m2 = 53628 * 0.09290304 / 3
         footprint_area_m2 = 1660.73
     elif "MidRiseApartment" in bld_type:
-        #46.3273m*16.9155m*12.1913m
+        # 46.3273m*16.9155m*12.1913m
         footprint_area_m2 = 33740 * 0.09290304 / 4
         footprint_area_m2 = 46.3273 * 16.9155
+    elif "HighOffice" in bld_type:
+        footprint_area_m2 = 31 * 15
     else:
         raise ValueError(f"bld_type = {bld_type} is not supported yet")
 
-def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m,MeteoData,
+def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m, MeteoData,
                     FractionsRoof):
-    global ep_sensWaste_w_m2_per_footprint_area,save_path_clean,vcwg_needed_time_idx_in_seconds, \
+    global ep_sensWaste_w_m2_per_footprint_area, save_path_clean, vcwg_needed_time_idx_in_seconds, \
         vcwg_canTemp_K, vcwg_canSpecHum_Ratio, vcwg_canPress_Pa, sem0, sem1, sem2, sem3
 
     sem0.acquire()
@@ -79,7 +81,7 @@ def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m,MeteoData,
     vcwg_canSpecHum_Ratio = numpy.mean(VerticalProfUrban.qn[0:Geometry_m.nz_u])
     vcwg_canPress_Pa = numpy.mean(VerticalProfUrban.presProf[0:Geometry_m.nz_u])
     sem1.release()
-    
+
     sem3.acquire()
     BEM_Building = BEM.building
     if 'WithoutCooling' in bld_type:
@@ -160,8 +162,8 @@ def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m,MeteoData,
         # write the data
     with open(data_saving_path, 'a') as f1:
         fmt1 = "%s," * 1 % (cur_datetime) + \
-               "%.3f," * 7 % (vcwg_canTemp_K,BEM_Building.sensWaste,
-                              wallSun_K,wallShade_K,roof_K,MeteoData.Tatm, MeteoData.Pre) + '\n'
+               "%.3f," * 7 % (vcwg_canTemp_K, BEM_Building.sensWaste,
+                              wallSun_K, wallShade_K, roof_K, MeteoData.Tatm, MeteoData.Pre) + '\n'
         f1.write(fmt1)
     sem0.release()
 
