@@ -11,3 +11,4 @@
 /resources/Parameters/*.txt
 /resources/DOERefBuildings/**
 /resources/TopForcing/*.csv
+/resources/idf/*.html
