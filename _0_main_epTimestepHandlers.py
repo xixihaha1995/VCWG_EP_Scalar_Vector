@@ -1,3 +1,4 @@
+from multiprocessing import Process
 from threading import Thread
 import _1_parent_coordination as coordination
 from VCWG_Hydrology import VCWG_Hydro
@@ -652,33 +653,11 @@ def High20Stories_get_ep_results(state):
 
         coordination.sem3.release()
 
-def run_ep_api():
+def run_ep_api(experiments_theme, idfFileName, VCWGParamFileName):
 
-    # idfFileName = 'Vector_Detailed_20Stories.idf'
-    # experiments_theme = 'DummyChicago20Stories_The_Effect_sensWaste_Profile'
-    # epwFileName = 'USA_IL_Chicago-OHare.Intl.AP.725300_TMY3_No_Precipitable_Water.epw'
-    # TopForcingFileName = 'None'
-    # VCWGParamFileName = 'Dummy_Chicago_20Stories.uwg'
-    # start_time = '2004-06-01 00:00:00'
-
-
-    '''
-    idfFileName = 'Vector_SimplifiedHighBld.idf'
-    experiments_theme = 'DummyChicago20Stories_The_Effect_sensWaste_Profile'
     epwFileName = 'USA_IL_Chicago-OHare.Intl.AP.725300_TMY3_No_Precipitable_Water.epw'
-    TopForcingFileName = 'None'
-    VCWGParamFileName = 'Dummy_Chicago_20Stories.uwg'
     start_time = '2004-06-01 00:00:00'
-    '''
-
-
-    idfFileName = 'Vector_Detailed_MedOffice.idf'
-    experiments_theme = 'DummyChicagoMedOffice_The_Effect_sensWaste_Profile'
-    epwFileName = 'USA_IL_Chicago-OHare.Intl.AP.725300_TMY3_No_Precipitable_Water.epw'
     TopForcingFileName = 'None'
-    VCWGParamFileName = 'Chicago_MedOffice.uwg'
-    start_time = '2004-06-01 00:00:00'
-
 
     coordination.ini_all(experiments_theme,idfFileName,epwFileName,start_time,
                             TopForcingFileName,VCWGParamFileName)
@@ -706,4 +685,21 @@ def run_ep_api():
     coordination.ep_api.runtime.run_energyplus(state, sys_args)
 
 if __name__ == '__main__':
-    run_ep_api()
+    # idfFileName = 'Vector_Detailed_MedOffice.idf'
+    # experiments_theme = 'DummyChicagoMedOffice_The_Effect_sensWaste_Profile'
+    # TopForcingFileName = 'None'
+    # VCWGParamFileName = 'Chicago_MedOffice.uwg'
+    # start_time = '2004-06-01 00:00:00'
+
+    experiments_theme = 'DummyChicago20Stories_The_Effect_sensWaste_Profile'
+    VCWGParamFileName = 'Dummy_Chicago_20Stories.uwg'
+    _processes = []
+    jobs = ['Vector_Detailed_20Stories.idf', 'Vector_SimplifiedHighBld.idf']
+    for idfFileName in jobs:
+        _temP = Process(target=run_ep_api, args=(experiments_theme, idfFileName, VCWGParamFileName))
+        _processes.append(_temP)
+
+    for _temP in _processes:
+        _temP.start()
+    for _temP in _processes:
+        _temP.join()

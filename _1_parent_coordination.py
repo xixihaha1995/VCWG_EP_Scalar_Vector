@@ -208,13 +208,19 @@ def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m, MeteoData,
             # prepare the header string for different sensors
             header_str = 'cur_datetime,canTemp,sensWaste,wallSun_K,wallShade_K,roof_K,' \
                          'MeteoData.Tatm,MeteoData.Pre,'
+            for idx in range(len(EP_floor_energy_lst)):
+                header_str += f'EP_floor_energy_J_[{idx}],'
+            for flr in range(len(vcwg_canTemp_K_list)):
+                header_str += f'Floor[{flr+1}]_OAT_K,'
             header_str += '\n'
             f1.write(header_str)
         # write the data
     with open(data_saving_path, 'a') as f1:
         fmt1 = "%s," * 1 % (cur_datetime) + \
                "%.3f," * 7 % (vcwg_canTemp_K, BEM_Building.sensWaste,
-                              wallSun_K, wallShade_K, roof_K, MeteoData.Tatm, MeteoData.Pre) + '\n'
+                              wallSun_K, wallShade_K, roof_K, MeteoData.Tatm, MeteoData.Pre) + \
+               "%.3f," * len(EP_floor_energy_lst) % tuple(EP_floor_energy_lst) + \
+                "%.3f," * len(vcwg_canTemp_K_list) % tuple(vcwg_canTemp_K_list) + '\n'
         f1.write(fmt1)
     sem0.release()
 
