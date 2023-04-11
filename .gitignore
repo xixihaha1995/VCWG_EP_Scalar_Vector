@@ -11,4 +11,7 @@
 /resources/Parameters/*.txt
 /resources/DOERefBuildings/**
 /resources/TopForcing/*.csv
-/resources/idf/*.html
+#ignore all files in the IDF folder,
+/resources/idf/**
+#but not the *.idf files
+!/resources/idf/*.idf

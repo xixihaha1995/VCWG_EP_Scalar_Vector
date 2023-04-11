@@ -3,7 +3,13 @@ from threading import Thread
 import _1_parent_coordination as coordination
 from VCWG_Hydrology import VCWG_Hydro
 import os, signal
-
+def api_to_csv(state):
+    orig = coordination.ep_api.exchange.list_available_api_data_csv(state)
+    newFileByteArray = bytearray(orig)
+    api_path = os.path.join(os.path.dirname(__file__), 'api_data.csv')
+    newFile = open(api_path, "wb")
+    newFile.write(newFileByteArray)
+    newFile.close()
 def run_vcwg():
     if 'None' in coordination.TopForcingFileName:
         TopForcingFileName = None
@@ -76,7 +82,7 @@ def _highOfficeGetActuatorHandles(state):
             get_actuator_handle(state, "Schedule:Compact", "Schedule Value", f"OUTDOORAIRNODE:Floor_{flr}DryBulb")
         tmp_owb_handle = coordination.ep_api.exchange. \
             get_actuator_handle(state, "Schedule:Compact", "Schedule Value", f"OUTDOORAIRNODE:Floor_{flr}WetBulb")
-        if tmp_odb_handle * tmp_owb_handle < 0:
+        if tmp_odb_handle <0 or tmp_owb_handle < 0:
             print('ovewrite_ep_weather(): HighOffice, some OAT handle not available')
             os.getpid()
             os.kill(os.getpid(), signal.SIGTERM)
@@ -90,6 +96,7 @@ def overwrite_ep_weather(state):
     if not coordination.overwrite_ep_weather_inited_handle:
         if not coordination.ep_api.exchange.api_data_fully_ready(state):
             return
+        # api_to_csv(state)
         coordination.overwrite_ep_weather_inited_handle = True
         odb_actuator_handle = coordination.ep_api.exchange.\
             get_actuator_handle(state, "Weather Data", "Outdoor Dry Bulb", "Environment")
@@ -142,6 +149,10 @@ def overwrite_ep_weather(state):
                 flr_nbrs = [i for i in range(1, 21)]
             elif 'SimplifiedHighBld' in coordination.bld_type:
                 flr_nbrs = [1, 11, 20]
+            coordination.save_canyon_odb_c = coordination.vcwg_canTemp_K - 273.15
+            coordination.save_canyon_rh_percent = rh
+            coordination.save_floor_odb_c = odb_c_list
+            coordination.save_floor_owb_c = owb_c_list
             print(f'{coordination.bld_type}, odb_c_list: {odb_c_list}')
             for rofHans in highOfficeActuatorsHandles['roofHconv']:
                 coordination.ep_api.exchange.set_actuator_value(state, rofHans, coordination.vcwg_hConv_w_m2_per_K)
@@ -472,7 +483,7 @@ def _20Stories_batch_get_energy_results(state, dict, accumulated_time_in_seconds
             # coordination.EP_floor_energy_lst[i-1] += energy_dict['PTHP ' + str(tmp_zone)][0]
             coordination.EP_floor_energy_lst[idx] += energy_dict['PTHP ' + str(tmp_zone)][1]
             coordination.EP_floor_energy_lst[idx] += energy_dict['PTHP ' + str(tmp_zone)][2]
-        coordination.EP_floor_energy_lst[idx] /= coordination.footprint_area_m2
+            coordination.EP_floor_energy_lst[idx] /= coordination.footprint_area_m2
         coordination.EP_floor_energy_lst[idx] /= accumulated_time_in_seconds
     return energy_dict, heating_total, cooling_total, electricity_total
 
@@ -694,7 +705,8 @@ if __name__ == '__main__':
     experiments_theme = 'DummyChicago20Stories_The_Effect_sensWaste_Profile'
     VCWGParamFileName = 'Dummy_Chicago_20Stories.uwg'
     _processes = []
-    jobs = ['Vector_Detailed_20Stories.idf', 'Vector_SimplifiedHighBld.idf']
+    # 'Vector_SimplifiedHighBld.idf'
+    jobs = ['Vector_Detailed_20Stories.idf']
     for idfFileName in jobs:
         _temP = Process(target=run_ep_api, args=(experiments_theme, idfFileName, VCWGParamFileName))
         _processes.append(_temP)

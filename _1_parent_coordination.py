@@ -13,7 +13,12 @@ def ini_all(_experiments_theme,_idfFileName,_epwFileName,_start_time,
         get_ep_results_inited_handle, overwrite_ep_weather_inited_handle, called_vcwg_bool, ep_last_call_time_seconds, \
         epwFileName, start_time, TopForcingFileName, VCWGParamFileName , \
         vcwg_canTemp_K_list, vcwg_canSpecHum_Ratio_list, vcwg_canPress_Pa_list, \
-        EP_nFloor, EP_floor_energy_lst, EP_wall_temperatures_K_dict
+        EP_nFloor, EP_floor_energy_lst, EP_wall_temperatures_K_dict,\
+        save_canyon_odb_c,save_canyon_rh_percent,save_floor_odb_c,save_floor_owb_c
+    save_canyon_odb_c = None
+    save_canyon_rh_percent = None
+    save_floor_odb_c = None
+    save_floor_owb_c = None
 
     epwFileName = _epwFileName
     start_time = _start_time
@@ -210,8 +215,11 @@ def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m, MeteoData,
                          'MeteoData.Tatm,MeteoData.Pre,'
             for idx in range(len(EP_floor_energy_lst)):
                 header_str += f'EP_floor_energy_J_[{idx}],'
+            header_str += 'save_canyon_odb_c, save_canyon_rh_percent,'
             for flr in range(len(vcwg_canTemp_K_list)):
-                header_str += f'Floor[{flr+1}]_OAT_K,'
+                header_str += f'save_floor_[{flr+1}]_odb_c,'
+            for flr in range(len(vcwg_canTemp_K_list)):
+                header_str += f'save_floor_[{flr+1}]_owb_c,'
             header_str += '\n'
             f1.write(header_str)
         # write the data
@@ -220,7 +228,9 @@ def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m, MeteoData,
                "%.3f," * 7 % (vcwg_canTemp_K, BEM_Building.sensWaste,
                               wallSun_K, wallShade_K, roof_K, MeteoData.Tatm, MeteoData.Pre) + \
                "%.3f," * len(EP_floor_energy_lst) % tuple(EP_floor_energy_lst) + \
-                "%.3f," * len(vcwg_canTemp_K_list) % tuple(vcwg_canTemp_K_list) + '\n'
+                "%.3f," * 2 % (save_canyon_odb_c, save_canyon_rh_percent) + \
+                "%.3f," * len(save_floor_odb_c) % tuple(save_floor_odb_c) + \
+                "%.3f," * len(save_floor_owb_c) % tuple(save_floor_owb_c) + '\n'
         f1.write(fmt1)
     sem0.release()
 
