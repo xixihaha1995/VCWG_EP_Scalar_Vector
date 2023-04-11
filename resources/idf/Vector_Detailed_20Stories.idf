@@ -34934,16 +34934,21 @@ Output:Variable,
     *,                       !- Key Value
     Zone Packaged Terminal Heat Pump Electricity Energy,  !- Variable Name
     timestep;                !- Reporting Frequency
-
+Output:Variable,
+    *,                       !- Key Value
+    Zone Packaged Terminal Heat Pump Electricity Rate,  !- Variable Name
+    timestep;                !- Reporting Frequency
   Output:Variable,*,Site Outdoor Air Drybulb Temperature,Hourly;
 
-  Output:Variable,*,Zone Outdoor Air Drybulb Temperature,Hourly;
+  Output:Variable,*,Zone Outdoor Air Drybulb Temperature,timestep;
 
   Output:Variable,
     *,                       !- Key Value
     Surface Outside Face Temperature,  !- Variable Name
     timestep;                !- Reporting Frequency
 
+Output:Variable,*,Fan Electricity Rate,timestep; !- HVAC Average [W]
+Output:Variable,*,Fan Electricity Energy,timestep; !- HVAC Sum [J]
 
 !-   ===========  ALL OBJECTS IN CLASS: OUTPUT:SQLITE ===========
 

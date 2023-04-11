@@ -207,6 +207,8 @@ Site:Location,
     -6,                      !- Time Zone {hr}
     201;                     !- Elevation {m}
 
+Site:GroundTemperature:BuildingSurface,19.527,19.502,19.536,19.598,20.002,21.640,22.225,22.375,21.449,20.121,19.802,19.633;
+
 
 !-   ===========  ALL OBJECTS IN CLASS: SIZINGPERIOD:DESIGNDAY ===========
 
@@ -285,6 +287,14 @@ RunPeriod,
 
 
 !-   ===========  ALL OBJECTS IN CLASS: SCHEDULETYPELIMITS ===========
+  ScheduleTypeLimits,
+    Any Number;              !- Name
+  ScheduleTypeLimits,
+    Temperature,             !- Name
+    -60,                     !- Lower Limit Value
+    200,                     !- Upper Limit Value
+    CONTINUOUS,              !- Numeric Type
+    Temperature;             !- Unit Type
 
 ScheduleTypeLimits,
     ActivityLevel 13,        !- Name
@@ -2265,12 +2275,12 @@ Schedule:Constant,
 
 Schedule:Constant,
     Always Off Discrete 1,   !- Name
-    ,                        !- Schedule Type Limits Name
+    OnOff,                        !- Schedule Type Limits Name
     0;                       !- Hourly Value
 
 Schedule:Constant,
     Always On Continuous 1,  !- Name
-    ,                        !- Schedule Type Limits Name
+    OnOff,                        !- Schedule Type Limits Name
     1;                       !- Hourly Value
 
 

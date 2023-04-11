@@ -52,7 +52,7 @@ def _medOfficeGetAirNodeHandles(state):
             get_actuator_handle(state, "Schedule:Compact", "Schedule Value", f"OUTDOORAIRNODE:{flr}DRYBULB")
         tmp_owb_handle = coordination.ep_api.exchange. \
             get_actuator_handle(state, "Schedule:Compact", "Schedule Value", f"OUTDOORAIRNODE:{flr}WETBULB")
-        if tmp_odb_handle * tmp_owb_handle < 0:
+        if tmp_odb_handle <0 or tmp_owb_handle < 0:
             print('ovewrite_ep_weather(): Detailed_MedOffice,some handle not available')
             os.getpid()
             os.kill(os.getpid(), signal.SIGTERM)
@@ -119,7 +119,7 @@ def overwrite_ep_weather(state):
         if "20Stories" in coordination.bld_type or 'SimplifiedHighBld' in coordination.bld_type:
             global highOfficeActuatorsHandles
             highOfficeActuatorsHandles = _highOfficeGetActuatorHandles(state)
-        if odb_actuator_handle * orh_actuator_handle< 0:
+        if odb_actuator_handle <0 or orh_actuator_handle< 0:
             print('ovewrite_ep_weather(): some handle not available')
             os.getpid()
             os.kill(os.getpid(), signal.SIGTERM)
@@ -170,7 +170,7 @@ def _medium_get_sensor_handles(state):
                                                              "SIMHVAC")
     roof_Text_handle  = coordination.ep_api.exchange.get_variable_handle(state, "Surface Outside Face Temperature", \
                                                                         "Building_Roof")
-    if hvac_heat_rejection_sensor_handle * roof_Text_handle < 0:
+    if hvac_heat_rejection_sensor_handle <0 or roof_Text_handle < 0:
         print("MediumOffice_get_handles: hvac_heat_rejection_sensor_handle * roof_Text_handle < 0")
         os.getpid()
         os.kill(os.getpid(), signal.SIGTERM)
@@ -204,7 +204,7 @@ def _medium_get_sensor_handles(state):
         _tmp_NSolar = coordination.ep_api.exchange.get_variable_handle(state, \
                                                                        "Surface Outside Face Incident Solar Radiation Rate per Area", \
                                                                        "Perimeter_" + level + "_ZN_3_Wall_North")
-        if _tmp_SText * _tmp_SSolar * _tmp_NText * _tmp_NSolar < 0:
+        if _tmp_SText <0 or _tmp_SSolar <0 or _tmp_NText <0 or _tmp_NSolar < 0:
             print("MediumOffice_get_handles: _tmp_SText * _tmp_SSolar * _tmp_NText * _tmp_NSolar < 0")
             os.getpid()
             os.kill(os.getpid(), signal.SIGTERM)
@@ -483,7 +483,7 @@ def _20Stories_batch_get_energy_results(state, dict, accumulated_time_in_seconds
             # coordination.EP_floor_energy_lst[i-1] += energy_dict['PTHP ' + str(tmp_zone)][0]
             coordination.EP_floor_energy_lst[idx] += energy_dict['PTHP ' + str(tmp_zone)][1]
             coordination.EP_floor_energy_lst[idx] += energy_dict['PTHP ' + str(tmp_zone)][2]
-            coordination.EP_floor_energy_lst[idx] /= coordination.footprint_area_m2
+        coordination.EP_floor_energy_lst[idx] /= coordination.footprint_area_m2
         coordination.EP_floor_energy_lst[idx] /= accumulated_time_in_seconds
     return energy_dict, heating_total, cooling_total, electricity_total
 
@@ -531,7 +531,7 @@ def _20Stories_batch_handles(state):
                                                                     "Surface " + str(576 + (i - 1) * 6))
         tmp_floor = coordination.ep_api.exchange.get_variable_handle(state, "Surface Outside Face Temperature",
                                                                      "Surface " + str(1 + (i - 1) * 6))
-        if tmp_roof * tmp_floor < 0:
+        if tmp_roof <0 or tmp_floor < 0:
             print("20 Stories roof or floor surface handle error!")
             os.getpid()
             os.kill(os.getpid(), signal.SIGTERM)
@@ -560,7 +560,7 @@ def _20Stories_batch_handles(state):
                                                                                                 "Surface " + str(14 + (i - 1) * 30))
         tmp_west = coordination.ep_api.exchange.get_variable_handle(state, "Surface Outside Face Temperature", \
                                                                                                 "Surface " + str(10 + (i - 1) * 30))
-        if tmp_south * tmp_west * tmp_east * tmp_north < 0:
+        if tmp_south <0 or tmp_west <0 or tmp_east <0 or tmp_north < 0:
             print("20 Stories wall surface handle error!")
             os.getpid()
             os.kill(os.getpid(), signal.SIGTERM)
@@ -584,7 +584,7 @@ def _20Stories_batch_handles(state):
         _tmpElectricity = coordination.ep_api.exchange.get_variable_handle(state,
                                                            "Zone Packaged Terminal Heat Pump Electricity Energy",
                                                              'PTHP ' + str(i))
-        if _tmpHeating * _tmpCooling * _tmpElectricity < 0:
+        if _tmpHeating <0 or _tmpCooling <0 or  _tmpElectricity < 0:
             print("PTHP energy handle error!")
             os.getpid()
             os.kill(os.getpid(), signal.SIGTERM)
@@ -705,8 +705,11 @@ if __name__ == '__main__':
     experiments_theme = 'DummyChicago20Stories_The_Effect_sensWaste_Profile'
     VCWGParamFileName = 'Dummy_Chicago_20Stories.uwg'
     _processes = []
-    # 'Vector_SimplifiedHighBld.idf'
-    jobs = ['Vector_Detailed_20Stories.idf']
+    # ''
+    jobs = [
+        'Vector_Detailed_20Stories.idf',
+        # 'Vector_SimplifiedHighBld.idf'
+            ]
     for idfFileName in jobs:
         _temP = Process(target=run_ep_api, args=(experiments_theme, idfFileName, VCWGParamFileName))
         _processes.append(_temP)
