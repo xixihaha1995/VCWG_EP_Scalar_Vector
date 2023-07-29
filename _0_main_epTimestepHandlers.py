@@ -154,8 +154,8 @@ def overwrite_ep_weather(state):
             coordination.save_floor_odb_c = odb_c_list
             coordination.save_floor_owb_c = owb_c_list
             print(f'{coordination.bld_type}, odb_c_list: {odb_c_list}')
-            for rofHans in highOfficeActuatorsHandles['roofHconv']:
-                coordination.ep_api.exchange.set_actuator_value(state, rofHans, coordination.vcwg_hConv_w_m2_per_K)
+            # for rofHans in highOfficeActuatorsHandles['roofHconv']:
+            #     coordination.ep_api.exchange.set_actuator_value(state, rofHans, coordination.vcwg_hConv_w_m2_per_K)
             for idx, flr_nbr in enumerate(flr_nbrs):
                 coordination.ep_api.exchange.set_actuator_value(state, highOfficeActuatorsHandles[f'odb{flr_nbr}'],
                                                                 odb_c_list[idx])
@@ -702,13 +702,13 @@ if __name__ == '__main__':
     # VCWGParamFileName = 'Chicago_MedOffice.uwg'
     # start_time = '2004-06-01 00:00:00'
 
-    experiments_theme = 'DummyChicago20Stories_The_Effect_sensWaste_Profile'
+    experiments_theme = 'one-way-DummyChicago20Stories_The_Effect_sensWaste_Profile'
     VCWGParamFileName = 'Dummy_Chicago_20Stories.uwg'
     _processes = []
     # ''
     jobs = [
         'Vector_Detailed_20Stories.idf',
-        # 'Vector_SimplifiedHighBld.idf'
+        'Vector_SimplifiedHighBld.idf'
             ]
     for idfFileName in jobs:
         _temP = Process(target=run_ep_api, args=(experiments_theme, idfFileName, VCWGParamFileName))
