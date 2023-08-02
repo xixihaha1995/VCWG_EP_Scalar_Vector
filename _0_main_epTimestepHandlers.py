@@ -419,7 +419,7 @@ def run_ep_api(idfFileName,VCWGParamFileName):
     TopForcingFileName = 'None'
     epwFileName = 'USA_IL_Chicago-OHare.Intl.AP.725300_TMY3_No_Precipitable_Water.epw'
     start_time = '2004-06-01 00:00:00'
-    experiments_theme = idfFileName[:-4]
+    experiments_theme = "one-way-"+idfFileName[:-4]
     coordination.ini_all(experiments_theme,idfFileName,epwFileName,start_time,
                             TopForcingFileName,VCWGParamFileName)
     state = coordination.ep_api.state_manager.new_state()
