@@ -155,15 +155,15 @@ def BEMCalc_Element(BEM, it, simTime, VerticalProfUrban, Geometry_m, MeteoData,
         os.makedirs(os.path.dirname(data_saving_path), exist_ok=True)
         with open(data_saving_path, 'a') as f1:
             # prepare the header string for different sensors
-            header_str = 'cur_datetime,canTemp,sensWaste,wallSun_K,wallShade_K,roof_K,' \
+            header_str = 'cur_datetime,canTemp_K,hum_ratio,vcwg_canPress_pa,sensWaste,wallSun_K,wallShade_K,roof_K,' \
                          'MeteoData.Tatm,MeteoData.Pre,'
             header_str += '\n'
             f1.write(header_str)
         # write the data
     with open(data_saving_path, 'a') as f1:
         fmt1 = "%s," * 1 % (cur_datetime) + \
-               "%.3f," * 7 % (vcwg_canTemp_K, BEM_Building.sensWaste,
-                              wallSun_K, wallShade_K, roof_K, MeteoData.Tatm, MeteoData.Pre) + '\n'
+               "%.3f," * 9 % (vcwg_canTemp_K, vcwg_canSpecHum_Ratio,vcwg_canPress_Pa,
+               BEM_Building.sensWaste,wallSun_K, wallShade_K, roof_K, MeteoData.Tatm, MeteoData.Pre) + '\n'
         f1.write(fmt1)
     sem0.release()
 
