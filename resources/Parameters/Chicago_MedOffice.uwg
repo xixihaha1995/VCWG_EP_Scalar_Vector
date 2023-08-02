@@ -22,7 +22,7 @@ Elevation,153,     # Elevation above sea level [m]
 # =================================================
 # Control switches
 # =================================================
-OPTION_RAY,0,         # 1: read the view factors from an existing file, 0: calculate view factors by ray tracing
+OPTION_RAY,1,         # 1: read the view factors from an existing file, 0: calculate view factors by ray tracing
 Rural_Model_name,1,   # 1: MOST, 2: Using an external forcing file with variables specified at the top of the domain
 EB_RuralModel_name,2, # 1: Louis, 2: Penman_Monteith
 Tdeep_ctrl,2,         # 1: Using force restore method, 2: Using climate data (from epw file). If reliable estimate of deep soil temperature is not available using force restore method is recommended

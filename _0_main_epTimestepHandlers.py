@@ -465,9 +465,9 @@ if __name__ == '__main__':
     # VCWGParamFileName = 'Chicago_MidRiseApartment.uwg'
     groups = [
         # ['Scalar_Detailed_HighOffice.idf', 'Dummy_Chicago_20Stories.uwg'],
-        ['Scalar_Simplified_HighOffice.idf', 'Dummy_Chicago_20Stories.uwg'],
+        # ['Scalar_Simplified_HighOffice.idf', 'Dummy_Chicago_20Stories.uwg'],
         # ['Scalar_Detailed_MedOffice.idf', 'Chicago_MedOffice.uwg'],
-        # ['Scalar_ShoeBox_MedOffice.idf', 'Chicago_MedOffice.uwg'],
+        ['Scalar_ShoeBox_MedOffice.idf', 'Chicago_MedOffice.uwg'],
         # ['Scalar_Detailed_MidRiseApartment.idf', 'Chicago_MidRiseApartment.uwg']
     ]
     _jobs = []
