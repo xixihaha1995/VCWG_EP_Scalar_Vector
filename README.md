@@ -29,4 +29,4 @@ We'd appreciate if you cite this [B&E journal paper](https://www.sciencedirect.c
     - [VCWG-EP-Experiments](https://github.com/xixihaha1995/VCWG_EP_Experiments)
     - [Urban climate and Who](https://github.com/xixihaha1995/urban_climate_and_who)
 7. You might find this repo insightful about the rural and weather files, UWG/VCWG settings at [UWG-Matlab](https://github.com/hansukyang/UWG_Matlab)
-8. Please email me to `wulicheneason@gmail.com` if you have any questions or need further assistance.
+8. Please email me to `lwu4@uwyo.edu` if you have any questions or need further assistance.
