@@ -24,7 +24,7 @@ We'd appreciate if you cite this [B&E journal paper](https://www.sciencedirect.c
 3. Two-way coupling is available at [Two-way coupling](https://github.com/xixihaha1995/VCWG_EP_Scalar_Vector/tree/vector)
 4. One-way coupling is available at [One-way coupling](https://github.com/xixihaha1995/VCWG_EP_Scalar_Vector/tree/scalar)
 5. Validation: All the processed rural and urban weather measurements are available at this [repo-branch](https://github.com/xixihaha1995/urban_climate_and_who/tree/why_improvements_on_Bypass/A_prepost_processing/_measurements), for original datasets [BUBBLE](https://ibis.geog.ubc.ca/~achristn/research/BUBBLE/data/BUBBLE_AT_IOP.txt,), [CAPITOUL](https://www.aeris-data.fr/en/catalogue-en/#masthead),[VANCUVER](https://ibis.geog.ubc.ca/~achristn/infrastructure/sunset.html)
-6. The entire paper code and dataset is fully hosted on repos (ranked by descend order):
+6. The entire paper code and dataset is **fully** hosted on repos (ranked by descend order):
     - [VCWG-EP-Scalar-Vector](https://github.com/xixihaha1995/VCWG_EP_Scalar_Vector)
     - [VCWG-EP-Experiments](https://github.com/xixihaha1995/VCWG_EP_Experiments)
     - [Urban climate and Who](https://github.com/xixihaha1995/urban_climate_and_who)
